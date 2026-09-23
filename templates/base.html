@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}家庭物品位置系统{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+</head>
+<body>
+    <main class="page">
+        {% if current_user %}
+        <div class="account-bar">
+            <span>已登录：{{ current_user }}</span>
+            <form method="post" action="/logout">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button class="button button-secondary" type="submit">退出</button>
+            </form>
+        </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+    <script src="{{ url_for('static', path='/app.js') }}" defer></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}操作记录{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <h1>操作记录</h1>
+    <a href="/">返回首页</a>
+</header>
+
+<section class="box">
+    <h2>最近 {{ entries|length }} 条</h2>
+
+    {% if entries %}
+    <ol class="history-list">
+        {% for entry in entries %}
+        <li>
+            <div>
+                <span class="badge">
+                    {{ action_labels.get(entry.action, entry.action) }}
+                </span>
+                <strong>
+                    {{ entity_labels.get(entry.entity_type, entry.entity_type) }}
+                </strong>
+                <span>{{ entry.summary }}</span>
+            </div>
+            <p>
+                {{ entry.created_at }}
+                · {{ entry.actor }}
+                {% if entry.entity_id is not none %}
+                    · ID {{ entry.entity_id }}
+                {% endif %}
+            </p>
+        </li>
+        {% endfor %}
+    </ol>
+    {% else %}
+        <p>目前还没有操作记录。</p>
+    {% endif %}
+</section>
+{% endblock %}

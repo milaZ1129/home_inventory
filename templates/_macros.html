@@ -1,0 +1,46 @@
+{% macro item_card(item) %}
+<article class="item-card">
+    <h3>{{ item.name }}</h3>
+    <p><strong>位置：</strong>{{ item.floor_name }} - {{ item.room_name }} - {{ item.spot_name }}</p>
+    <p><strong>数量/备注：</strong>{{ item.quantity or "" }}</p>
+    <p><strong>标签：</strong>{{ item.tags or "" }}</p>
+
+    <div class="actions">
+        <a class="button button-secondary" href="/items/{{ item.id }}/edit">修改</a>
+        <form method="post" action="/items/{{ item.id }}/delete"
+              data-confirm="确定要把这个物品移入回收站吗？">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button class="button button-danger" type="submit">移入回收站</button>
+        </form>
+    </div>
+</article>
+{% endmacro %}
+
+{% macro location_picker(location_groups, selected_location_id=None) %}
+<div class="location-list">
+    {% for floor in location_groups %}
+    <details class="floor-box" {% if floor.open %}open{% endif %}>
+        <summary>{{ floor.name }}</summary>
+
+        {% for room in floor.rooms %}
+        <details class="room-box" {% if room.open %}open{% endif %}>
+            <summary>{{ room.name }}</summary>
+
+            {% for location in room.locations %}
+            <label class="location-option">
+                <input
+                    type="radio"
+                    name="location_id"
+                    value="{{ location.id }}"
+                    {% if location.id == selected_location_id %}checked{% endif %}
+                    required
+                >
+                {{ location.spot }}
+            </label>
+            {% endfor %}
+        </details>
+        {% endfor %}
+    </details>
+    {% endfor %}
+</div>
+{% endmacro %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}登录 · 家庭物品位置系统{% endblock %}
+
+{% block content %}
+<section class="box login-box">
+    <h1>家庭物品位置系统</h1>
+    <p class="hint">请输入家庭共享账号后继续。</p>
+
+    {% if error %}
+        <p class="error-message" role="alert">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" action="/login">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="next" value="{{ next_path }}">
+
+        <label for="username">用户名</label>
+        <input
+            id="username"
+            type="text"
+            name="username"
+            maxlength="50"
+            autocomplete="username"
+            required
+            autofocus
+        >
+
+        <label for="password">密码</label>
+        <input
+            id="password"
+            type="password"
+            name="password"
+            maxlength="1024"
+            autocomplete="current-password"
+            required
+        >
+
+        <button class="button button-primary" type="submit">登录</button>
+    </form>
+</section>
+{% endblock %}

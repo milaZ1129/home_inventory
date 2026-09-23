@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}管理位置{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <h1>管理位置</h1>
+    <a href="/">返回首页</a>
+</header>
+
+<section class="box">
+    <h2>添加新位置</h2>
+    <form method="post" action="/locations/add">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <label for="location-floor">楼层</label>
+        <select id="location-floor" name="floor" required>
+            {% for floor in floors %}
+                <option value="{{ floor }}">{{ floor }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="location-room">房间 / 区域</label>
+        <input
+            id="location-room"
+            type="text"
+            name="room"
+            maxlength="50"
+            placeholder="例如：客厅、厨房、主卧、储藏间"
+            required
+        >
+
+        <label for="location-spot">具体位置</label>
+        <input
+            id="location-spot"
+            type="text"
+            name="spot"
+            maxlength="50"
+            placeholder="例如：茶几、电视柜、衣柜、金属架"
+            required
+        >
+
+        <button class="button button-primary" type="submit">保存位置</button>
+    </form>
+</section>
+
+<section class="box">
+    <h2>现有位置（{{ locations|length }}）</h2>
+
+    {% if locations %}
+        {% for location in locations %}
+        <article class="item-card">
+            <h3>{{ location.floor }} - {{ location.room }} - {{ location.spot }}</h3>
+            <p><strong>物品数量：</strong>{{ location.item_count }}</p>
+            {% if location.deleted_item_count %}
+            <p>
+                <strong>回收站物品：</strong>{{ location.deleted_item_count }}
+            </p>
+            {% endif %}
+
+            <div class="actions">
+                <a class="button button-secondary" href="/locations/{{ location.id }}/edit">修改</a>
+
+                {% if location.item_count %}
+                    <button class="button button-danger" type="button" disabled>
+                        不能删除，已有 {{ location.item_count }} 个物品
+                    </button>
+                {% elif location.deleted_item_count %}
+                    <button class="button button-danger" type="button" disabled>
+                        不能删除，回收站中有 {{ location.deleted_item_count }} 个物品
+                    </button>
+                {% else %}
+                    <form method="post" action="/locations/{{ location.id }}/delete"
+                          data-confirm="确定要删除这个位置吗？">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button class="button button-danger" type="submit">删除</button>
+                    </form>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    {% else %}
+        <p>目前还没有位置。</p>
+    {% endif %}
+</section>
+{% endblock %}

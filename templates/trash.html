@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}回收站{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <h1>回收站</h1>
+    <a href="/">返回首页</a>
+</header>
+
+{% if restored %}
+<p class="notice" role="status">物品已恢复到原来的位置。</p>
+{% endif %}
+
+{% if permanently_deleted %}
+<p class="notice" role="status">物品已永久删除。</p>
+{% endif %}
+
+<section class="box">
+    <h2>已删除物品（{{ items|length }}）</h2>
+    <p class="hint">
+        物品会在回收站保留 30 天，之后自动永久删除。
+        恢复后会回到删除前的存放位置。
+    </p>
+
+    {% if items %}
+        {% for item in items %}
+        <article class="item-card trash-card">
+            <h3>{{ item.name }}</h3>
+            <p>
+                <strong>原位置：</strong>
+                {{ item.floor_name }} - {{ item.room_name }} - {{ item.spot_name }}
+            </p>
+            <p><strong>数量/备注：</strong>{{ item.quantity or "" }}</p>
+            <p><strong>标签：</strong>{{ item.tags or "" }}</p>
+            <p>
+                <strong>删除时间：</strong>{{ item.deleted_at }}
+                · <strong>操作人：</strong>{{ item.deleted_by or "system" }}
+            </p>
+
+            <div class="actions">
+                <form method="post" action="/items/{{ item.id }}/restore">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <button class="button button-primary" type="submit">恢复</button>
+                </form>
+
+                <form
+                    method="post"
+                    action="/items/{{ item.id }}/permanent-delete"
+                    data-confirm="永久删除后只能通过数据库备份找回，确定继续吗？"
+                >
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <button class="button button-danger" type="submit">
+                        永久删除
+                    </button>
+                </form>
+            </div>
+        </article>
+        {% endfor %}
+    {% else %}
+        <p>回收站是空的。</p>
+    {% endif %}
+</section>
+{% endblock %}

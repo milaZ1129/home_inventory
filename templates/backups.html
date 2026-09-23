@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}数据备份与恢复{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <h1>数据备份与恢复</h1>
+    <a href="/">返回首页</a>
+</header>
+
+{% if restored %}
+<p class="notice" role="status">
+    数据库已恢复。恢复前的版本也已自动保存，可以继续正常使用。
+</p>
+{% endif %}
+
+{% if error %}
+<p class="error-message" role="alert">{{ error }}</p>
+{% endif %}
+
+<section class="box">
+    <h2>下载当前数据</h2>
+    <p>
+        下载的是一致的 SQLite 数据库副本，包含所有物品和存放位置。
+        建议定期保存到另一台设备或云盘。
+    </p>
+    <form method="post" action="/backups/download">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="button button-primary" type="submit">
+            下载当前备份
+        </button>
+    </form>
+</section>
+
+<section class="box">
+    <h2>从备份恢复</h2>
+    <p class="warning">
+        恢复会用上传文件替换当前物品与位置数据。系统会先自动保存当前数据库，
+        并检查上传文件的完整性、表结构和位置引用。
+    </p>
+    <form
+        method="post"
+        action="/backups/restore"
+        enctype="multipart/form-data"
+        data-confirm="确定要用这个备份替换当前数据吗？"
+    >
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        <label for="backup-file">SQLite 备份文件</label>
+        <input
+            id="backup-file"
+            type="file"
+            name="backup_file"
+            accept=".db,application/vnd.sqlite3,application/octet-stream"
+            required
+        >
+
+        <button class="button button-danger" type="submit">
+            校验并恢复
+        </button>
+    </form>
+</section>
+
+<section class="box">
+    <h2>服务器自动备份（{{ backups|length }}）</h2>
+    <p class="hint">
+        每天首次启动会自动备份；每次恢复前也会保留安全副本。
+        日常备份最多保留 30 份，恢复前副本最多保留 20 份。
+    </p>
+
+    {% if backups %}
+    <ul class="backup-list">
+        {% for backup in backups %}
+        <li>
+            <code>{{ backup.name }}</code>
+            <span>
+                {{ backup.created_at.strftime("%Y-%m-%d %H:%M") }}
+                · {{ (backup.size / 1024)|round(1) }} KB
+            </span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>目前还没有服务器自动备份。</p>
+    {% endif %}
+</section>
+{% endblock %}

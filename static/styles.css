@@ -1,0 +1,297 @@
+:root {
+    color-scheme: light;
+    font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f4f5f7;
+    color: #202124;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+.page {
+    width: min(100% - 28px, 760px);
+    margin: 28px auto;
+}
+
+.page-header,
+.box {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
+}
+
+.account-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 12px;
+    color: #60656c;
+    font-size: 14px;
+}
+
+.account-bar form {
+    margin: 0;
+}
+
+.login-box {
+    max-width: 440px;
+    margin: 12vh auto 0;
+}
+
+.error-message {
+    padding: 11px 12px;
+    border: 1px solid #d99;
+    border-radius: 8px;
+    background: #fff1f1;
+    color: #812b2b;
+}
+
+.notice,
+.warning {
+    padding: 12px 14px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.notice {
+    border: 1px solid #9bc6a7;
+    background: #effaf2;
+    color: #245c32;
+}
+
+.warning {
+    border: 1px solid #e3c47b;
+    background: #fff8e8;
+    color: #664d12;
+}
+
+.backup-list {
+    padding: 0;
+    list-style: none;
+}
+
+.backup-list li {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e7ea;
+}
+
+.backup-list code {
+    overflow-wrap: anywhere;
+}
+
+.backup-list span {
+    flex: 0 0 auto;
+    color: #60656c;
+    font-size: 14px;
+}
+
+.trash-card {
+    border-left-color: #b57575;
+}
+
+.history-list {
+    padding-left: 22px;
+}
+
+.history-list li {
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7ea;
+}
+
+.history-list p {
+    margin: 6px 0 0;
+    color: #60656c;
+    font-size: 14px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 7px;
+    margin-right: 6px;
+    border-radius: 999px;
+    background: #e9edf3;
+    font-size: 13px;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+h1,
+h2,
+h3 {
+    margin-top: 0;
+}
+
+label,
+legend {
+    font-weight: 600;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 11px 12px;
+    margin: 7px 0 15px;
+    border: 1px solid #cfd3d8;
+    border-radius: 8px;
+    background: white;
+    font: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 3px solid rgb(39 110 241 / 18%);
+    border-color: #276ef1;
+}
+
+fieldset {
+    padding: 0;
+    margin: 0 0 16px;
+    border: 0;
+}
+
+.button {
+    display: inline-block;
+    width: auto;
+    padding: 9px 14px;
+    border: 0;
+    border-radius: 8px;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.button-primary {
+    background: #276ef1;
+    color: white;
+}
+
+.button-secondary {
+    background: #e9edf3;
+    color: #202124;
+}
+
+.button-danger {
+    background: #f2e8e8;
+    color: #812b2b;
+}
+
+.button:disabled {
+    color: #777;
+    background: #eee;
+    cursor: not-allowed;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.actions form {
+    margin: 0;
+}
+
+.item-card {
+    padding: 15px;
+    margin: 12px 0;
+    border: 1px solid #e1e4e8;
+    border-left: 5px solid #7b8794;
+    border-radius: 9px;
+    background: #fff;
+}
+
+.item-card p {
+    overflow-wrap: anywhere;
+}
+
+.floor-box,
+.room-box {
+    padding: 10px;
+    margin-top: 9px;
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+    background: #fafbfc;
+}
+
+.room-box {
+    margin-left: 10px;
+    background: white;
+}
+
+summary {
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.location-option {
+    display: block;
+    padding: 9px;
+    margin-top: 7px;
+    border-radius: 7px;
+    font-weight: 400;
+}
+
+.location-option:hover {
+    background: #f2f5f9;
+}
+
+.location-option input {
+    width: auto;
+    margin: 0 8px 0 0;
+}
+
+.hint {
+    color: #60656c;
+    font-size: 14px;
+}
+
+.collapsible > summary {
+    font-size: 1.35rem;
+}
+
+.collapsible-content {
+    padding-top: 12px;
+}
+
+@media (max-width: 520px) {
+    .page {
+        width: min(100% - 18px, 760px);
+        margin: 9px auto;
+    }
+
+    .page-header,
+    .box {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .backup-list li {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

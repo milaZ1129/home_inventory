@@ -1,0 +1,16 @@
+.security.json
+.env
+.env.*
+.venv/
+.vscode/
+.DS_Store
+__pycache__/
+.pytest_cache/
+.coverage
+.mypy_cache/
+*.py[cod]
+home_inventory.db
+home_inventory.db-shm
+home_inventory.db-wal
+backups/
+data_backups/

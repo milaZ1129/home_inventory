@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% from "_macros.html" import item_card, location_picker with context %}
+
+{% block content %}
+<header class="page-header">
+    <h1>家庭物品位置系统</h1>
+    <div class="actions">
+        <a class="button button-secondary" href="/locations">管理位置</a>
+        <a class="button button-secondary" href="/backups">数据备份</a>
+        <a class="button button-secondary" href="/trash">回收站</a>
+        <a class="button button-secondary" href="/history">操作记录</a>
+    </div>
+</header>
+
+<section class="box">
+    <h2>搜索物品</h2>
+    <form method="get" action="/">
+        <label for="search-query">关键词</label>
+        <input
+            id="search-query"
+            type="search"
+            name="q"
+            value="{{ q }}"
+            maxlength="100"
+            placeholder="例如：纸巾、厨房、柜子、主卧"
+        >
+        <button class="button button-primary" type="submit">搜索</button>
+    </form>
+    <p class="hint">可以搜索物品名称、楼层、房间、具体位置、备注或标签。</p>
+</section>
+
+<section class="box">
+    <h2>搜索结果</h2>
+    {% if search_results is none %}
+        <p class="hint">请输入关键词后搜索。</p>
+    {% elif search_results %}
+        {% for item in search_results %}
+            {{ item_card(item) }}
+        {% endfor %}
+    {% else %}
+        <p>没有找到相关物品。</p>
+    {% endif %}
+</section>
+
+<section class="box">
+    <h2>添加物品</h2>
+    <form method="post" action="/items/add">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <label for="item-name">物品名称</label>
+        <input
+            id="item-name"
+            type="text"
+            name="name"
+            maxlength="100"
+            placeholder="例如：纸巾、螺丝刀、备用牙刷"
+            required
+        >
+
+        <fieldset>
+            <legend>存放位置</legend>
+            {{ location_picker(location_groups) }}
+        </fieldset>
+
+        <label for="item-quantity">数量 / 简短备注</label>
+        <input
+            id="item-quantity"
+            type="text"
+            name="quantity"
+            maxlength="200"
+            placeholder="例如：3包、1盒、放在左边"
+        >
+
+        <label for="item-tags">标签</label>
+        <input
+            id="item-tags"
+            type="text"
+            name="tags"
+            maxlength="200"
+            placeholder="例如：纸巾, 卫生纸, cleaning"
+        >
+
+        <button class="button button-primary" type="submit">保存物品</button>
+    </form>
+</section>
+
+<details class="box collapsible">
+    <summary>所有物品（{{ all_items|length }}）</summary>
+    <div class="collapsible-content">
+        {% if all_items %}
+            {% for item in all_items %}
+                {{ item_card(item) }}
+            {% endfor %}
+        {% else %}
+            <p>目前还没有保存任何物品。</p>
+        {% endif %}
+    </div>
+</details>
+{% endblock %}
