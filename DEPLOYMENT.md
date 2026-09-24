@@ -8,6 +8,8 @@
 
 如果需要真正公网网址，请使用 HTTPS，不要把本机开发命令直接暴露到互联网。
 
+如果选择 Oracle Cloud Always Free，可以看专门文档：[ORACLE_CLOUD.md](ORACLE_CLOUD.md)。
+
 ## 关键环境变量
 
 复制 `.env.example` 为 `.env`，或在云平台后台添加这些变量：
