@@ -10,9 +10,9 @@ from collections import defaultdict, deque
 from dataclasses import dataclass
 from pathlib import Path
 
+from config import settings
 
-BASE_DIR = Path(__file__).resolve().parent
-DEFAULT_CONFIG_PATH = BASE_DIR / ".security.json"
+DEFAULT_CONFIG_PATH = settings.security_config_path
 PBKDF2_ITERATIONS = 600_000
 SALT_BYTES = 16
 
@@ -79,9 +79,24 @@ def write_security_config(username, password, path=None):
 def load_security_config(path=None):
     config_path = Path(path) if path else get_config_path()
     if not config_path.exists():
-        raise RuntimeError(
-            "缺少安全配置。请先运行：python scripts/set_password.py"
-        )
+        env_username = os.environ.get("HOME_INVENTORY_USERNAME")
+        env_password = os.environ.get("HOME_INVENTORY_PASSWORD")
+        if env_username and env_password:
+            write_security_config(
+                env_username,
+                env_password,
+                path=config_path,
+            )
+        else:
+            hint = (
+                "缺少安全配置。请先运行：python scripts/set_password.py"
+            )
+            if settings.is_production:
+                hint += (
+                    "，或在首次部署时设置 HOME_INVENTORY_USERNAME "
+                    "和 HOME_INVENTORY_PASSWORD 环境变量。"
+                )
+            raise RuntimeError(hint)
 
     try:
         payload = json.loads(config_path.read_text(encoding="utf-8"))

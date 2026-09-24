@@ -1,7 +1,6 @@
 from contextlib import asynccontextmanager
 import hmac
 import logging
-import os
 import secrets
 import tempfile
 from datetime import datetime
@@ -22,8 +21,10 @@ from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.background import BackgroundTask
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
+from config import settings
 from database import (
     add_item,
     add_location,
@@ -53,7 +54,7 @@ from security import LoginRateLimiter, load_security_config, verify_credentials
 
 BASE_DIR = Path(__file__).resolve().parent
 FLOORS = ("一楼", "二楼", "三楼", "地下室")
-MAX_BACKUP_UPLOAD_BYTES = 100 * 1024 * 1024
+MAX_BACKUP_UPLOAD_BYTES = settings.max_backup_upload_bytes
 ACTION_LABELS = {
     "create": "新增",
     "update": "修改",
@@ -77,12 +78,16 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     init_db()
+    if settings.enable_auto_backup:
+        try:
+            ensure_daily_backup()
+        except (OSError, ValueError):
+            logger.exception("自动数据库备份失败")
     try:
-        ensure_daily_backup()
-    except (OSError, ValueError):
-        logger.exception("自动数据库备份失败")
-    try:
-        purge_deleted_items(days=30, actor="system")
+        purge_deleted_items(
+            days=settings.recycle_bin_retention_days,
+            actor="system",
+        )
     except (OSError, ValueError):
         logger.exception("自动清理回收站失败")
     yield
@@ -98,10 +103,15 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=SECURITY_CONFIG.session_secret,
     session_cookie="home_inventory_session",
-    max_age=12 * 60 * 60,
+    max_age=settings.session_max_age_seconds,
     same_site="strict",
-    https_only=os.environ.get("HOME_INVENTORY_HTTPS_ONLY") == "1",
+    https_only=settings.https_only,
 )
+if settings.allowed_hosts:
+    app.add_middleware(
+        TrustedHostMiddleware,
+        allowed_hosts=list(settings.allowed_hosts),
+    )
 app.mount(
     "/static",
     StaticFiles(directory=BASE_DIR / "static"),

@@ -6,9 +6,11 @@ from datetime import date, datetime
 from pathlib import Path
 from uuid import uuid4
 
+from config import settings
 
-DB_PATH = Path(__file__).resolve().with_name("home_inventory.db")
-BACKUP_DIR = Path(__file__).resolve().with_name("data_backups")
+
+DB_PATH = settings.database_path
+BACKUP_DIR = settings.backup_dir
 BACKUP_LOCK = threading.RLock()
 REQUIRED_COLUMNS = {
     "locations": {"id", "floor", "room", "spot"},
@@ -25,6 +27,7 @@ REQUIRED_COLUMNS = {
 
 
 def get_connection():
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH, timeout=10)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")

@@ -191,6 +191,30 @@ def test_login_rate_limit(tmp_path, monkeypatch):
         assert int(limited.headers["retry-after"]) > 0
 
 
+def test_security_config_can_be_bootstrapped_from_environment(
+    tmp_path,
+    monkeypatch,
+):
+    config_path = tmp_path / "generated-security.json"
+    monkeypatch.setenv("HOME_INVENTORY_SECURITY_CONFIG", str(config_path))
+    monkeypatch.setenv("HOME_INVENTORY_USERNAME", "cloud-family")
+    monkeypatch.setenv("HOME_INVENTORY_PASSWORD", "cloud-password-123")
+
+    loaded = security.load_security_config()
+
+    assert config_path.exists()
+    assert security.verify_credentials(
+        loaded,
+        "cloud-family",
+        "cloud-password-123",
+    )
+    assert not security.verify_credentials(
+        loaded,
+        "cloud-family",
+        "wrong-password",
+    )
+
+
 def test_home_health_and_static_files(tmp_path, monkeypatch):
     with make_client(tmp_path, monkeypatch) as client:
         log_in(client)
